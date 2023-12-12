@@ -1,0 +1,118 @@
+{% include 'header.html' %}
+
+<div class="container mt-5 p-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Datos del empleado</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/store" enctype="multipart/form-data" id="formularioEmpleado" onsubmit="return validarFormulario()">
+                        <div class="form-group">
+                            <label for="txtNombre">Nombre:</label>
+                            <input type="text" class="form-control" name="txtNombre" id="txtNombre" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCorreo">Correo:</label>
+                            <input type="email" class="form-control" name="txtCorreo" id="txtCorreo" required>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <label for="txtFoto">Foto (solo JPG):</label>
+                            <input type="file" class="form-control-file" name="txtFoto" id="txtFoto" accept=".jpg" onchange="previewImage()" required>
+                            <img id="imagenPrevia" src="#" alt="Vista previa de la imagen" style="max-width: 100%; max-height: 200px; display: none;" class="mx-auto mt-3">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                        <a href="{{url_for('index')}}" class="btn btn-success">Regresar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validarFormulario() {
+        let nombre = document.getElementById('txtNombre').value;
+        let correo = document.getElementById('txtCorreo').value;
+        let fotoInput = document.getElementById('txtFoto');
+        let errorNombre = document.getElementById('errorNombre');
+        let errorCorreo = document.getElementById('errorCorreo');
+        let errorFoto = document.getElementById('errorFoto');
+
+        errorNombre.innerHTML = '';
+        errorCorreo.innerHTML = '';
+        errorFoto.innerHTML = '';
+
+        let valido = true;
+
+        // Validar el nombre (solo letras y espacios permitidos)
+        let nombreRegex = /^[a-zA-Z\s]+$/;
+        if (!nombreRegex.test(nombre)) {
+            errorNombre.innerHTML = 'El nombre solo puede contener letras y espacios.';
+            valido = false;
+        }
+
+        // Expresión regular para validar el correo
+        let correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!correoRegex.test(correo)) {
+            errorCorreo.innerHTML = 'El correo no tiene un formato válido.';
+            valido = false;
+        }
+
+        if (nombre.trim() === '') {
+            errorNombre.innerHTML = 'El nombre es obligatorio.';
+            valido = false;
+        }
+
+        if (correo.trim() === '') {
+            errorCorreo.innerHTML = 'El correo es obligatorio.';
+            valido = false;
+        }
+
+        if (fotoInput.files.length > 0) {
+            let foto = fotoInput.files[0];
+            // Validar la extensión del archivo (solo JPG)
+            let extension = foto.name.split('.').pop().toLowerCase();
+            if (extension !== 'jpg') {
+                errorFoto.innerHTML = 'La foto debe ser un archivo JPG.';
+                valido = false;
+            }
+        } else {
+            errorFoto.innerHTML = 'La foto es obligatoria.';
+            valido = false;
+        }
+
+        return valido;
+    }
+
+    function previewImage() {
+        let input = document.getElementById('txtFoto');
+        let preview = document.getElementById('imagenPrevia');
+        let file = input.files[0];
+        let reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
+</script>
+
+{% include 'footer.html' %}
+
+
+{% include 'footer.html' %}
+
+
+
